@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Comprar Entrada{% endblock %}
+
+{% block content %}
+<h2 class="text-center">Selecciona tu Asiento</h2>
+<form method="POST">
+    <div class="form-group">
+        <label for="asiento_id">Asiento:</label>
+        <select name="asiento_id" class="form-control">
+            {% for asiento in asientos %}
+            <option value="{{ asiento[0] }}">{{ asiento[2] }} - Fila {{ asiento[1] }} - Asiento {{ asiento[3] }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="precio">Precio:</label>
+        <input type="text" name="precio" class="form-control" value="30.00" readonly>
+    </div>
+
+    <!-- Botón para el pago con Stripe -->
+    <button type="submit" class="btn btn-success btn-block">Pagar con Stripe</button>
+</form>
+{% endblock %}
