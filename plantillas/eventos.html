@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Eventos Disponibles{% endblock %}
+
+{% block content %}
+<h2 class="text-center">Eventos Disponibles</h2>
+<div class="list-group">
+    {% for evento in eventos %}
+    <a href="{{ url_for('comprar_entrada', evento_id=evento[0]) }}" class="list-group-item list-group-item-action">
+        <h5>{{ evento[1] }}</h5>
+        <p>{{ evento[2] }} - {{ evento[3] }} - {{ evento[4] }}</p>
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}
