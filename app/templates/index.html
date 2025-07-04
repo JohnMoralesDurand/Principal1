@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}ArteVivo - Inicio{% endblock %}
+
+{% block content %}
+<div class="jumbotron bg-light p-5 rounded">
+    <h1 class="display-4">Bienvenido a ArteVivo</h1>
+    <p class="lead">Tu plataforma para comprar entradas a los mejores eventos culturales.</p>
+    <hr class="my-4">
+    <p>Explora nuestra selección de eventos, elige tus asientos y compra tus entradas de forma rápida y segura.</p>
+    <a class="btn btn-primary btn-lg" href="{{ url_for('eventos.lista') }}">
+        <i class="fas fa-calendar-alt me-2"></i>Ver Eventos
+    </a>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-ticket-alt fa-3x text-primary mb-3"></i>
+                <h3 class="card-title">Compra Fácil</h3>
+                <p class="card-text">Selecciona tus asientos preferidos y completa tu compra en minutos.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-qrcode fa-3x text-primary mb-3"></i>
+                <h3 class="card-title">Tickets Digitales</h3>
+                <p class="card-text">Recibe tus tickets por correo electrónico o descárgalos directamente.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-lock fa-3x text-primary mb-3"></i>
+                <h3 class="card-title">Pagos Seguros</h3>
+                <p class="card-text">Todas las transacciones están protegidas con la última tecnología de seguridad.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

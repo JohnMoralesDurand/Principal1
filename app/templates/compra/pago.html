@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Pago - {{ evento.nombre }}{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('eventos.lista') }}">Eventos</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('eventos.detalle', evento_id=evento.id) }}">{{ evento.nombre }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('eventos.asientos', evento_id=evento.id) }}">Selección de Asientos</a></li>
+        <li class="breadcrumb-item active">Pago</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-credit-card me-2"></i>Información de Pago</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre en la Tarjeta</label>
+                        <input type="text" class="form-control" id="nombre" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="numero_tarjeta" class="form-label">Número de Tarjeta</label>
+                        <input type="text" class="form-control" id="numero_tarjeta" required>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="fecha_expiracion" class="form-label">Fecha de Expiración (MM/AA)</label>
+                            <input type="text" class="form-control" id="fecha_expiracion" placeholder="MM/AA" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="cvv" class="form-label">CVV</label>
+                            <input type="text" class="form-control" id="cvv" required>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>Esta es una demostración. No se realizará ningún cargo real.
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-lock me-2"></i>Pagar ${{ asiento.precio }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Resumen de Compra</h5>
+            </div>
+            <div class="card-body">
+                <h5>{{ evento.nombre }}</h5>
+                <p><i class="far fa-calendar me-2"></i>{{ evento.fecha.strftime('%d/%m/%Y') }}</p>
+                <p><i class="far fa-clock me-2"></i>{{ evento.hora.strftime('%H:%M') }}</p>
+                <p><i class="fas fa-map-marker-alt me-2"></i>{{ evento.lugar }}</p>
+                
+                <hr>
+                
+                <p><strong>Asiento:</strong> Fila {{ asiento.fila }}, Número {{ asiento.numero_asiento }}</p>
+                
+                <hr>
+                
+                <div class="d-flex justify-content-between">
+                    <span>Precio del Boleto:</span>
+                    <span>${{ asiento.precio }}</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span>Cargo por Servicio:</span>
+                    <span>$0.00</span>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between fw-bold">
+                    <span>Total:</span>
+                    <span>${{ asiento.precio }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // Simular procesamiento de pago
+            const submitButton = form.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Procesando...';
+            
+            // Simular demora de procesamiento
+            setTimeout(function() {
+                form.submit();
+            }, 2000);
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}{% if evento %}Editar Evento{% else %}Nuevo Evento{% endif %} - Admin{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('admin.eventos') }}">Eventos</a></li>
+        <li class="breadcrumb-item active">{% if evento %}Editar Evento{% else %}Nuevo Evento{% endif %}</li>
+    </ol>
+</nav>
+
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">
+            <i class="fas {% if evento %}fa-edit{% else %}fa-plus{% endif %} me-2"></i>
+            {% if evento %}Editar Evento{% else %}Nuevo Evento{% endif %}
+        </h4>
+    </div>
+    <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre del Evento</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" value="{{ evento.nombre if evento else '' }}" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="descripcion" class="form-label">Descripción</label>
+                <textarea class="form-control" id="descripcion" name="descripcion" rows="4" required>{{ evento.descripcion if evento else '' }}</textarea>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="fecha" class="form-label">Fecha</label>
+                    <input type="date" class="form-control" id="fecha" name="fecha" value="{{ evento.fecha.strftime('%Y-%m-%d') if evento else '' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="hora" class="form-label">Hora</label>
+                    <input type="time" class="form-control" id="hora" name="hora" value="{{ evento.hora.strftime('%H:%M') if evento else '' }}" required>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="lugar" class="form-label">Lugar</label>
+                <input type="text" class="form-control" id="lugar" name="lugar" value="{{ evento.lugar if evento else '' }}" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="imagen" class="form-label">Imagen del Evento</label>
+                {% if evento and evento.imagen %}
+                <div class="mb-2">
+                    <img src="{{ evento.imagen }}" alt="{{ evento.nombre }}" class="img-thumbnail" style="max-height: 200px;">
+                </div>
+                {% endif %}
+                <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*">
+                <div class="form-text">{% if evento %}Deja en blanco para mantener la imagen actual.{% else %}Selecciona una imagen para el evento.{% endif %}</div>
+            </div>
+            
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i>Guardar Evento
+                </button>
+                <a href="{{ url_for('admin.eventos') }}" class="btn btn-secondary">
+                    <i class="fas fa-times me-2"></i>Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

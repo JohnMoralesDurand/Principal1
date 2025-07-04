@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Registro - ArteVivo{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-user-plus me-2"></i>Crear Cuenta</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('auth.registro') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="mb-3">
+                        <label for="nombre_usuario" class="form-label">Nombre de Usuario</label>
+                        <input type="text" class="form-control" id="nombre_usuario" name="nombre_usuario" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="correo" class="form-label">Correo Electrónico</label>
+                        <input type="email" class="form-control" id="correo" name="correo" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="contrasena" class="form-label">Contraseña</label>
+                        <input type="password" class="form-control" id="contrasena" name="contrasena" required>
+                        <div class="form-text">La contraseña debe tener al menos 8 caracteres.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirmar_contrasena" class="form-label">Confirmar Contraseña</label>
+                        <input type="password" class="form-control" id="confirmar_contrasena" name="confirmar_contrasena" required>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-plus me-2"></i>Registrarse
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center">
+                <p class="mb-0">¿Ya tienes una cuenta? <a href="{{ url_for('auth.login') }}">Inicia Sesión</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Validación de formulario
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        const password = document.getElementById('contrasena');
+        const confirmPassword = document.getElementById('confirmar_contrasena');
+        
+        form.addEventListener('submit', function(event) {
+            if (password.value !== confirmPassword.value) {
+                event.preventDefault();
+                alert('Las contraseñas no coinciden');
+            }
+            
+            if (password.value.length < 8) {
+                event.preventDefault();
+                alert('La contraseña debe tener al menos 8 caracteres');
+            }
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

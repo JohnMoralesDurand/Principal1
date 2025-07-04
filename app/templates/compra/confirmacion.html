@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Confirmación de Compra - ArteVivo{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-header bg-success text-white">
+        <h4 class="mb-0"><i class="fas fa-check-circle me-2"></i>¡Compra Exitosa!</h4>
+    </div>
+    <div class="card-body text-center">
+        <div class="mb-4">
+            <i class="fas fa-check-circle text-success fa-5x mb-3"></i>
+            <h2>¡Gracias por tu compra!</h2>
+            <p class="lead">Tu entrada ha sido reservada exitosamente.</p>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Detalles de la Compra</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 text-md-end"><strong>Evento:</strong></div>
+                    <div class="col-md-6 text-md-start">{{ evento.nombre }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 text-md-end"><strong>Fecha:</strong></div>
+                    <div class="col-md-6 text-md-start">{{ evento.fecha.strftime('%d/%m/%Y') }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 text-md-end"><strong>Hora:</strong></div>
+                    <div class="col-md-6 text-md-start">{{ evento.hora.strftime('%H:%M') }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 text-md-end"><strong>Lugar:</strong></div>
+                    <div class="col-md-6 text-md-start">{{ evento.ubicacion }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 text-md-end"><strong>Asiento:</strong></div>
+                    <div class="col-md-6 text-md-start">Fila {{ asiento.fila }}, Número {{ asiento.numero_asiento }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 text-md-end"><strong>Precio:</strong></div>
+                    <div class="col-md-6 text-md-start">${{ venta.precio }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 text-md-end"><strong>Código de Ticket:</strong></div>
+                    <div class="col-md-6 text-md-start">{{ venta.codigo_ticket }}</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mb-4">
+            <h5>Tu ticket ha sido generado</h5>
+            <p>Puedes descargarlo ahora o acceder a él más tarde desde tu perfil.</p>
+            <a href="{{ url_for('tickets.descargar_ticket', venta_id=venta.id) }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-download me-2"></i>Descargar Ticket
+            </a>
+        </div>
+        
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>También hemos enviado una copia de tu ticket a tu correo electrónico.
+        </div>
+    </div>
+    <div class="card-footer">
+        <a href="{{ url_for('eventos.lista') }}" class="btn btn-outline-primary">
+            <i class="fas fa-arrow-left me-2"></i>Volver a Eventos
+        </a>
+    </div>
+</div>
+{% endblock %}

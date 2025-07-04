@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Mis Tickets{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4"><i class="fas fa-ticket-alt me-2"></i>Mis Tickets</h1>
+    
+    {% if tickets %}
+    <div class="row">
+        {% for ticket in tickets %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">{{ ticket.evento.nombre }}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge bg-success">Pagado</span>
+                        <span class="text-muted">Código: {{ ticket.codigo_ticket }}</span>
+                    </div>
+                    
+                    <p><i class="far fa-calendar-alt me-2"></i>{{ ticket.evento.fecha.strftime('%d/%m/%Y') }}</p>
+                    <p><i class="far fa-clock me-2"></i>{{ ticket.evento.hora.strftime('%H:%M') }}</p>
+                    <p><i class="fas fa-map-marker-alt me-2"></i>{{ ticket.evento.ubicacion }}</p>
+                    <p><i class="fas fa-chair me-2"></i>Asiento: Fila {{ ticket.asiento.fila }}, Número {{ ticket.asiento.numero_asiento }}</p>
+                    <p><i class="fas fa-tag me-2"></i>Precio: ${{ ticket.precio }}</p>
+                </div>
+                <div class="card-footer">
+                    <a href="{{ url_for('tickets.descargar_ticket', venta_id=ticket.id) }}" class="btn btn-primary w-100">
+                        <i class="fas fa-download me-2"></i>Descargar Ticket
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>No tienes tickets comprados. 
+        <a href="{{ url_for('eventos.lista') }}" class="alert-link">Explora los eventos disponibles</a> para comprar entradas.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

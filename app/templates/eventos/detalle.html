@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}{{ evento.nombre }} - ArteVivo{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('eventos.lista') }}">Eventos</a></li>
+        <li class="breadcrumb-item active">{{ evento.nombre }}</li>
+    </ol>
+</nav>
+
+<div class="card mb-4">
+    <div class="row g-0">
+        <div class="col-md-4">
+            {% if evento.imagen %}
+            <img src="{{ evento.imagen }}" class="img-fluid rounded-start" alt="{{ evento.nombre }}">
+            {% else %}
+            <div class="bg-light text-center py-5 h-100">
+                <i class="fas fa-ticket-alt fa-5x text-secondary mt-5"></i>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <h1 class="card-title">{{ evento.nombre }}</h1>
+                <p class="card-text">{{ evento.descripcion }}</p>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h5><i class="far fa-calendar me-2"></i>Fecha y Hora</h5>
+                        <p>{{ evento.fecha.strftime('%d/%m/%Y') }} a las {{ evento.hora.strftime('%H:%M') }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-map-marker-alt me-2"></i>Lugar</h5>
+                        <p>{{ evento.lugar }}</p>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('eventos.asientos', evento_id=evento.id) }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-chair me-2"></i>Seleccionar Asientos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h4><i class="fas fa-info-circle me-2"></i>Información Adicional</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h5>Recomendaciones</h5>
+                <ul>
+                    <li>Llegar al menos 30 minutos antes del evento.</li>
+                    <li>Presentar el ticket digital o impreso en la entrada.</li>
+                    <li>No se permiten alimentos ni bebidas del exterior.</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h5>Políticas</h5>
+                <ul>
+                    <li>No se permiten cambios ni devoluciones.</li>
+                    <li>El evento está sujeto a cambios sin previo aviso.</li>
+                    <li>La entrada es válida solo para la fecha y hora indicadas.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

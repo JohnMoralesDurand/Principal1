@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% block title %}Selección de Asientos - {{ evento.nombre }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .seat-map {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 20px 0;
+    }
+    .row-label {
+        width: 30px;
+        text-align: center;
+        font-weight: bold;
+    }
+    .seat-row {
+        display: flex;
+        margin-bottom: 10px;
+        align-items: center;
+    }
+    .seat {
+        width: 40px;
+        height: 40px;
+        margin: 0 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .seat.disponible {
+        background-color: #28a745;
+        color: white;
+    }
+    .seat.reservado {
+        background-color: #ffc107;
+        color: black;
+    }
+    .seat.vendido {
+        background-color: #dc3545;
+        color: white;
+        cursor: not-allowed;
+    }
+    .seat.selected {
+        background-color: #007bff;
+        color: white;
+        transform: scale(1.1);
+    }
+    .seat-info {
+        margin-top: 20px;
+    }
+    .legend {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+    .legend-item {
+        display: flex;
+        align-items: center;
+        margin: 0 10px;
+    }
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 3px;
+        margin-right: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('eventos.lista') }}">Eventos</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('eventos.detalle', evento_id=evento.id) }}">{{ evento.nombre }}</a></li>
+        <li class="breadcrumb-item active">Selección de Asientos</li>
+    </ol>
+</nav>
+
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0"><i class="fas fa-chair me-2"></i>Selecciona tu asiento</h4>
+    </div>
+    <div class="card-body">
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #28a745;"></div>
+                <span>Disponible</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #ffc107;"></div>
+                <span>Reservado</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #dc3545;"></div>
+                <span>Vendido</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #007bff;"></div>
+                <span>Seleccionado</span>
+            </div>
+        </div>
+        
+        <div class="text-center mb-4">
+            <h5>ESCENARIO</h5>
+            <div class="bg-secondary text-white py-2 mb-4" style="width: 80%; margin: 0 auto;">
+                ESCENARIO
+            </div>
+        </div>
+        
+        <div class="seat-map">
+            {% for fila in filas_ordenadas %}
+            <div class="seat-row">
+                <div class="row-label">{{ fila }}</div>
+                {% for asiento in asientos_por_fila[fila] %}
+                <div class="seat {{ asiento.estado }}" 
+                     data-id="{{ asiento.id }}" 
+                     data-fila="{{ asiento.fila }}" 
+                     data-numero="{{ asiento.numero_asiento }}" 
+                     data-precio="{{ asiento.precio }}" 
+                     data-estado="{{ asiento.estado }}">
+                    {{ asiento.numero_asiento }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="seat-info card mt-4" id="seat-info" style="display: none;">
+            <div class="card-body">
+                <h5 class="card-title">Información del Asiento</h5>
+                <p><strong>Fila:</strong> <span id="info-fila"></span></p>
+                <p><strong>Número:</strong> <span id="info-numero"></span></p>
+                <p><strong>Precio:</strong> $<span id="info-precio"></span></p>
+                
+                <form action="{{ url_for('tickets.comprar', evento_id=evento.id, asiento_id=0) }}" method="POST" id="compra-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="asiento_id" id="asiento_id">
+                    <input type="hidden" name="precio" id="asiento_precio">
+                    
+                    <!-- Stripe Buy Button -->
+                    {% if config['STRIPE_BUY_BUTTON_ID'] and config['STRIPE_PUBLIC_KEY'] %}
+                        <div id="stripe-buy-button-container">
+                            <stripe-buy-button
+                                buy-button-id="{{ config['STRIPE_BUY_BUTTON_ID'] }}"
+                                publishable-key="{{ config['STRIPE_PUBLIC_KEY'] }}"
+                            >
+                            </stripe-buy-button>
+                        </div>
+                        <div class="text-center mt-2">
+                            <small class="text-muted">Pago seguro con Stripe</small>
+                        </div>
+                    {% else %}
+                        <!-- Regular Submit Button (as fallback) -->
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-shopping-cart me-2"></i>Comprar Entrada
+                        </button>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Stripe Buy Button Script -->
+<script async src="https://js.stripe.com/v3/buy-button.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const seats = document.querySelectorAll('.seat');
+        const seatInfo = document.getElementById('seat-info');
+        const infoFila = document.getElementById('info-fila');
+        const infoNumero = document.getElementById('info-numero');
+        const infoPrecio = document.getElementById('info-precio');
+        const asientoIdInput = document.getElementById('asiento_id');
+        const asientoPrecioInput = document.getElementById('asiento_precio');
+        const compraForm = document.getElementById('compra-form');
+        
+        let selectedSeat = null;
+        
+        seats.forEach(seat => {
+            if (seat.dataset.estado === 'disponible') {
+                seat.addEventListener('click', function() {
+                    // Deseleccionar asiento anterior
+                    if (selectedSeat) {
+                        selectedSeat.classList.remove('selected');
+                    }
+                    
+                    // Seleccionar nuevo asiento
+                    this.classList.add('selected');
+                    selectedSeat = this;
+                    
+                    // Mostrar información
+                    infoFila.textContent = this.dataset.fila;
+                    infoNumero.textContent = this.dataset.numero;
+                    infoPrecio.textContent = this.dataset.precio;
+                    
+                    // Actualizar formulario
+                    asientoIdInput.value = this.dataset.id;
+                    asientoPrecioInput.value = this.dataset.precio;
+                    compraForm.action = compraForm.action.replace(/\/\d+$/, '/' + this.dataset.id);
+                    
+                    // Mostrar información del asiento
+                    seatInfo.style.display = 'block';
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

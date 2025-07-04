@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Gestión de Eventos - Admin{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-calendar-alt me-2"></i>Gestión de Eventos</h1>
+    <a href="{{ url_for('admin.nuevo_evento') }}" class="btn btn-success">
+        <i class="fas fa-plus me-2"></i>Nuevo Evento
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Lista de Eventos</h5>
+    </div>
+    <div class="card-body">
+        {% if eventos %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Lugar</th>
+                        <th>Asientos</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for evento in eventos %}
+                    <tr>
+                        <td>{{ evento.id }}</td>
+                        <td>{{ evento.nombre }}</td>
+                        <td>{{ evento.fecha.strftime('%d/%m/%Y') }}</td>
+                        <td>{{ evento.hora.strftime('%H:%M') }}</td>
+                        <td>{{ evento.lugar }}</td>
+                        <td>
+                            <a href="{{ url_for('admin.asientos_evento', evento_id=evento.id) }}" class="btn btn-sm btn-info">
+                                <i class="fas fa-chair me-1"></i>Asientos
+                            </a>
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{{ url_for('admin.editar_evento', evento_id=evento.id) }}" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ evento.id }}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- Modal de confirmación para eliminar -->
+                            <div class="modal fade" id="deleteModal{{ evento.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ evento.id }}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-danger text-white">
+                                            <h5 class="modal-title" id="deleteModalLabel{{ evento.id }}">Confirmar Eliminación</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            ¿Estás seguro de que deseas eliminar el evento "{{ evento.nombre }}"? Esta acción no se puede deshacer.
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                            <form action="{{ url_for('admin.eliminar_evento', evento_id=evento.id) }}" method="POST" style="display: inline;">
+                                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>No hay eventos registrados. Crea un nuevo evento para comenzar.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
