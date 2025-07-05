@@ -9,3 +9,4 @@ flask-swagger-ui==4.11.1
 flasgger==0.9.7.1
 stripe==7.5.0
 gunicorn==21.2.0
+python-dotenv
